@@ -1,4 +1,4 @@
-#include "mac.h"
+#include "addr.h"
 
 Mac& Mac::nullMac() {
 	static uint8_t _value[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };

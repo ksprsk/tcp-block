@@ -2,17 +2,13 @@ LDLIBS=-lpcap
 
 all: tcp-block
 
-main.o: main.cpp ip.h #mac.h ethhdr.h arphdr.h 
+main.o: main.cpp frame.h
 
-ip.o: ip.h ip.cpp
+addr.o: addr.cpp addr.h
 
-mac.o : mac.h mac.cpp
+frame.o: frame.cpp frame.h addr.h
 
-#arphdr.o: mac.h ip.h arphdr.h arphdr.cpp
-
-#ethhdr.o: mac.h ethhdr.h ethhdr.cpp
-
-tcp-block: main.o ip.o mac.o #arphdr.o ethhdr.o
+tcp-block: main.o addr.o frame.o
 	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 clean:

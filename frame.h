@@ -36,12 +36,12 @@ struct IPv4Hdr final {
 	Ip sip() { return sip_; }
 	Ip dip() { return dip_; }
 	uint8_t protocol() { return protocol_; }
-	uint8_t IHL() { return (ver_IHL_>>4)<<2; }
-	uint16_t packet_len(){ return total_len_; }
+	uint8_t IHL() { return (ver_IHL_&0xf)<<2; }
+	uint16_t packet_len(){ return ntohs(total_len_); }
 	// protocol(protocol_)
 	enum: uint8_t {
 		TCP = 0x06
-	};
+	};	
 };
 
 struct TCPHdr final {
@@ -55,11 +55,11 @@ struct TCPHdr final {
 	uint16_t checksum_;
 	uint16_t urg_ptr_;
 	
-	uint16_t src_port() { return src_port_; }
-	uint16_t dst_port() { return dst_port_; }
-	uint32_t seq_num() { return seq_num_; }
-	uint32_t ack_num() { return ack_num_; }
-	uint8_t hdr_len() { return (data_offset_reserved_&0xf)<<2; }
+	uint16_t src_port() { return ntohs(src_port_); }
+	uint16_t dst_port() { return ntohs(dst_port_); }
+	uint32_t seq_num() { return ntohl(seq_num_); }
+	uint32_t ack_num() { return ntohl(ack_num_); }
+	uint8_t hdr_len() { return (data_offset_reserved_>>4)<<2; }
 	enum: uint16_t {
 		HTTP = 80,
 		HTTPS = 443
@@ -68,4 +68,4 @@ struct TCPHdr final {
 
 #pragma pack(pop)
 
-bool check_pattern(uint8_t *data,size_t datalen,uint8_t *pattern);
+bool check_pattern(const uint8_t *data,size_t datalen,const uint8_t *pattern,size_t patternlen);

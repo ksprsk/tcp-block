@@ -26,17 +26,15 @@ size_t is_forbidden(const uint8_t* packet_data,const uint8_t *pattern,size_t pat
 	bool isforbidden;
 	idx+=((TCPHdr*)(packet_data+idx))->hdr_len();
 	if(idx==datalen)return 0;
-	printf("%d %d %d\n",idx,src_port,dst_port);
+	//check port
 	if(dst_port==TCPHdr::HTTP)
 	{
-		printf("http\n");
 		size_t httphdr_len=0;
 		while((idx+httphdr_len+4<=datalen)&&memcmp(packet_data+idx+httphdr_len,"\r\n\r\n",4))httphdr_len++;
 		isforbidden=check_pattern(packet_data+idx,httphdr_len,pattern,patternlen);
 	}
 	else if(dst_port==TCPHdr::HTTPS)
 	{
-		printf("https\n");
 		isforbidden=check_pattern(packet_data+idx,datalen-idx,pattern,patternlen);
 	}
 	else
@@ -46,6 +44,12 @@ size_t is_forbidden(const uint8_t* packet_data,const uint8_t *pattern,size_t pat
 	if(isforbidden)return datalen;
 	return 0;
 }
+
+void tcp_block(pcap_t* handle,const uint8_t* data,size_t datalen)
+{
+	
+}
+
 
 int main(int argc,const char* const argv[])
 {
@@ -74,7 +78,7 @@ int main(int argc,const char* const argv[])
 			exit(-1);
 		}
 		size_t datalen=is_forbidden(packet_data,pattern,patternlen);
-		if(datalen)printf("%d\n",datalen);
+		if(datalen)tcp_block(handle,packet_data,datalen);
 	}
 	
 	

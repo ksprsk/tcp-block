@@ -66,6 +66,22 @@ struct TCPHdr final {
 	};
 };
 
+struct IPv4_TCPHdr final {
+	IPv4Hdr ipv4hdr;
+	TCPHdr tcphdr;
+};
+
+struct PseudoHdr final {
+	uint32_t sip;
+	uint32_t dip;
+	uint8_t reserved;
+	uint8_t proto;
+	uint16_t len;
+};
+
 #pragma pack(pop)
 
 bool check_pattern(const uint8_t *data,size_t datalen,const uint8_t *pattern,size_t patternlen);
+uint32_t calc_checksum(const uint8_t *data,size_t datalen);
+uint16_t calc_ipv4_checksum(const uint8_t *data);
+uint16_t calc_tcp_checksum(IPv4Hdr *ipv4hdr,const uint8_t *data);
